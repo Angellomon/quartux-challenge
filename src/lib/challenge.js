@@ -1,3 +1,5 @@
+const SEP_CHAR = '-';
+
 /**
  * @param {string[]} elements
  *  @param {string[]} connections
@@ -32,12 +34,28 @@ function getConnectionsBefore(graph, target, elementsHistory) {
 	const connections = [];
 
 	for (let [k, set] of graph) {
-		if (set.has(target) && !elementsHistory.has(target)) {
+		if (set.has(target)) {
 			connections.push([k, set]);
 		}
 	}
 
-	return connections;
+	return connections.filter((c) => !elementsHistory.has(c[0]));
+}
+
+/**
+ * @param {Set<string>} paths
+ * @param {string} element
+ * @returns {string[]}
+ */
+function getStartPaths(paths, element) {
+	/** @type {string[]} */
+	const result = [];
+	paths.forEach((p) => {
+		if (p[0] === element) {
+			result.push(p);
+		}
+	});
+	return result;
 }
 
 /**
@@ -50,12 +68,14 @@ function getConnectionsBefore(graph, target, elementsHistory) {
 function findShortestPathBottomUp(graph, firstElement, lastElement) {
 	let found = false;
 	const path = [lastElement]; // maybe a set
+
 	let currentElement = lastElement;
 	const elementsHistory = new Set();
 
 	const initialConnections = getConnectionsBefore(graph, lastElement, elementsHistory);
 	let connectionsStack = [...initialConnections];
-	elementsHistory.add(lastElement);
+
+	connectionsStack.forEach((c) => elementsHistory.add(c[0]));
 	console.log('initialConnections', initialConnections);
 
 	while (!found) {
@@ -73,17 +93,34 @@ function findShortestPathBottomUp(graph, firstElement, lastElement) {
 		path.push(currentKey);
 
 		const nextConnections = getConnectionsBefore(graph, currentElement, elementsHistory);
+		nextConnections.forEach((c) => elementsHistory.add(c[0]));
 		// connectionsStack.concat(nextConnections);
 		connectionsStack = [...connectionsStack, ...nextConnections];
 
 		console.log('nextConnections', nextConnections);
 		console.log('connectionsStack', connectionsStack);
+		console.log('elementsHistory', elementsHistory);
 
 		// path.push(firstElement);
-		found = true;
+		found = elementsHistory.has(firstElement);
 	}
 
+	path.push(firstElement);
+
+	console.log('path', path);
+
 	return path.reverse();
+}
+
+/**
+ * Find the shortest path (bottom-up)
+ *
+ * @param {Map<string, Set<string>>} graph
+ * @param {string} firstElement inital element
+ * @param {string} lastElement search element
+ */
+function getPossiblePaths(graph, firstElement, lastElement) {
+	const elementsStack = [];
 }
 
 /**
@@ -99,7 +136,8 @@ export function ShortestPath(input) {
 
 	console.log(graph, first, last);
 
-	findShortestPathBottomUp(graph, first, last);
+	// findShortestPathBottomUp(graph, first, last);
+	getPossiblePaths(graph, first, last);
 
 	const result = 'provisional result';
 

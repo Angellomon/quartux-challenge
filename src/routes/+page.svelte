@@ -3,7 +3,7 @@
 
 	const inputs = [
 		'["4","A","B","C","D","A-B","B-D","B-C","C-D"]',
-		'["7","A","B","C","D","E","F","G","A-B","A-E","B-C","C-D","D-F","E-D","F-G"]'
+		'["7","A","B","C","D","E","F","G","A-B","A-E","B-C","B-D","C-D","D-F","E-D","F-G"]'
 	];
 
 	let selectedInput = '';
@@ -30,15 +30,14 @@
 
 	<p class="mb-4">
 		An example of <span class="params">strArr</span> may be
-		<span class="example">["4","A","B","C","D","A-B","B-D","B-C","C-D"]</span>. Your program should
-		return the shortest path from the <b>first</b> Node to the <b>last</b> Node in the array
-		separated by dashes. So in the example above the output should be <b>A-B-D</b>. Here is another
-		example with
+		<span class="example">{inputs[0]}</span>. Your program should return the shortest path from the
+		<b>first</b>
+		Node to the <b>last</b> Node in the array separated by dashes. So in the example above the
+		output should be <b>A-B-D</b>. Here is another example with
 		<span class="params">strArr</span>
 		being
-		<span class="example"
-			>["7","A","B","C","D","E","F","G","A-B","A-E","B-C","C-D","D-F","E-D","F-G"]</span
-		>. The output should for this array should be <b>A-E-D-F-G</b>
+		<span class="example">{inputs[1]}</span>. The output should for this array should be
+		<b>A-E-D-F-G</b>
 	</p>
 
 	<section class="inputs">
