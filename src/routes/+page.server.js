@@ -1,4 +1,4 @@
-import { ShortestPath, parseInput } from './challenge.js';
+import { ShortestPath } from '$lib';
 
 export const actions = {
 	challenge: async (event) => {
