@@ -59,57 +59,68 @@ function getStartPaths(paths, element) {
 }
 
 /**
- * Find the shortest path (bottom-up)
+ * Find the shortest path
  *
  * @param {Map<string, Set<string>>} graph
  * @param {string} firstElement
  * @param {string} lastElement
  */
-function findShortestPathBottomUp(graph, firstElement, lastElement) {
-	let found = false;
-	const path = [lastElement]; // maybe a set
+function shortestPath(graph, firstElement, lastElement) {
+	if (firstElement == lastElement) return;
 
-	let currentElement = lastElement;
-	const elementsHistory = new Set();
+	const queue = [
+		{
+			element: firstElement
+		}
+	];
 
-	const initialConnections = getConnectionsBefore(graph, lastElement, elementsHistory);
-	let connectionsStack = [...initialConnections];
+	/** @type {Map<string, boolean>} */
+	const visitedElements = new Map();
+	visitedElements.set(firstElement, true);
 
-	connectionsStack.forEach((c) => elementsHistory.add(c[0]));
-	console.log('initialConnections', initialConnections);
+	let tail = 0;
 
-	while (!found) {
-		let currentConnection = connectionsStack.pop();
-		console.log('connectionsStack', connectionsStack);
-		console.log('currentConnection', currentConnection);
+	/** @type {Record<string, string>} */
+	const predecessors = {};
 
-		if (!currentConnection) continue;
+	while (tail < queue.length) {
+		const currentElement = queue.shift();
 
-		const [currentKey, currentSet] = currentConnection;
+		if (!currentElement) break;
 
-		if (!currentSet.has(currentElement)) continue;
+		let result = '';
 
-		currentElement = currentKey;
-		path.push(currentKey);
+		graph.get(currentElement.element)?.forEach((el) => {
+			if (visitedElements.get(el)) return;
 
-		const nextConnections = getConnectionsBefore(graph, currentElement, elementsHistory);
-		nextConnections.forEach((c) => elementsHistory.add(c[0]));
-		// connectionsStack.concat(nextConnections);
-		connectionsStack = [...connectionsStack, ...nextConnections];
+			visitedElements.set(el, true);
 
-		console.log('nextConnections', nextConnections);
-		console.log('connectionsStack', connectionsStack);
-		console.log('elementsHistory', elementsHistory);
+			if (el == lastElement) {
+				const path = [el];
 
-		// path.push(firstElement);
-		found = elementsHistory.has(firstElement);
+				let curr = currentElement.element;
+
+				while (curr != firstElement) {
+					path.push(curr);
+					curr = predecessors[curr];
+				}
+
+				path.push(curr);
+				path.reverse();
+
+				result = path.join('-');
+			}
+
+			predecessors[el] = currentElement.element;
+			queue.push({
+				element: el
+			});
+		});
+
+		if (result) return result;
 	}
 
-	path.push(firstElement);
-
-	console.log('path', path);
-
-	return path.reverse();
+	return '-1';
 }
 
 /**
@@ -119,8 +130,36 @@ function findShortestPathBottomUp(graph, firstElement, lastElement) {
  * @param {string} firstElement inital element
  * @param {string} lastElement search element
  */
-function getPossiblePaths(graph, firstElement, lastElement) {
-	const elementsStack = [];
+function breathFirstSearch(graph, firstElement, lastElement) {
+	if (!graph.has(firstElement)) return [];
+
+	const visited = new Map();
+	visited.set(firstElement, true);
+
+	const queue = [
+		{
+			element: firstElement,
+			count: 0
+		}
+	];
+	let tail = 0;
+
+	while (queue.length > tail) {
+		const currentElement = queue.shift();
+		let count = currentElement?.count || 0;
+		if (!currentElement) break;
+
+		console.log(currentElement);
+		graph.get(currentElement.element)?.forEach((el) => {
+			if (!visited.has(el)) {
+				visited.set(el, true);
+				queue.push({
+					element: el,
+					count
+				});
+			}
+		});
+	}
 }
 
 /**
@@ -136,10 +175,11 @@ export function ShortestPath(input) {
 
 	console.log(graph, first, last);
 
-	// findShortestPathBottomUp(graph, first, last);
-	getPossiblePaths(graph, first, last);
+	let result = shortestPath(graph, first, last);
+	console.log('result', result);
+	// breathFirstSearch(graph, first, last);
 
-	const result = 'provisional result';
+	result = 'provisional result';
 
 	return result;
 }
