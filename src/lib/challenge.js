@@ -179,9 +179,7 @@ export function ShortestPath(input) {
 	console.log('result', result);
 	// breathFirstSearch(graph, first, last);
 
-	result = 'provisional result';
-
-	return result;
+	return result || '';
 }
 
 /**

@@ -6,5 +6,10 @@ export const actions = {
 		const inputStr = String(formData.get('input'));
 
 		const result = ShortestPath(inputStr);
+
+		return {
+			success: true,
+			result
+		};
 	}
 };
